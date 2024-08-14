@@ -15,7 +15,7 @@ class NewEntryScreen extends StatefulWidget {
 class _NewEntryScreenState extends State<NewEntryScreen> {
   final controller = TextEditingController();
 
-  int selectedFace = 0;
+  Face selectedFace = Face.poker;
 
   @override
   Widget build(BuildContext context) {
@@ -73,22 +73,26 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                 runSpacing: 18,
                 children: List.generate(
                   Face.values.length,
-                  (index) => GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedFace = index;
-                      });
-                    },
-                    behavior: HitTestBehavior.opaque,
-                    child: Opacity(
-                      opacity: selectedFace == index ? .2 : 1,
-                      child: SvgPicture.asset(
-                        Face.values[index].icon,
-                        height: 40,
-                        width: 40,
+                  (index) {
+                    final face = Face.values[index];
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedFace = face;
+                        });
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: Opacity(
+                        opacity: selectedFace == face ? .2 : 1,
+                        child: SvgPicture.asset(
+                          face.icon,
+                          height: 40,
+                          width: 40,
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 58),
