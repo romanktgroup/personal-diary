@@ -116,7 +116,10 @@ class _MainScreenState extends State<MainScreen> {
                     child: ListView.separated(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 145),
                       itemCount: entries.length,
-                      itemBuilder: (context, index) => EntryItem(entry: entries[index]),
+                      itemBuilder: (context, index) => EntryItem(
+                        entry: entries[index],
+                        refreshParent: _loadRecords,
+                      ),
                       separatorBuilder: (context, index) => const SizedBox(height: 30),
                     ),
                   ),
@@ -129,12 +132,12 @@ class _MainScreenState extends State<MainScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const NewEntryScreen()),
-                  ).then((e) {
-                    if (e == true) {
-                      _loadRecords();
-                    }
-                  });
+                    MaterialPageRoute(
+                      builder: (context) => NewEntryScreen(
+                        refreshParent: _loadRecords,
+                      ),
+                    ),
+                  );
                 },
                 behavior: HitTestBehavior.opaque,
                 child: Container(

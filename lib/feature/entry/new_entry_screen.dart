@@ -17,9 +17,11 @@ class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({
     super.key,
     this.entry,
+    required this.refreshParent,
   });
 
   final Entry? entry;
+  final VoidCallback? refreshParent;
 
   @override
   State<NewEntryScreen> createState() => _NewEntryScreenState();
@@ -84,8 +86,8 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
       final id = await dbHelper.update(row);
       print('Updated row id: $id');
     }
-
-    Navigator.of(context).pop(true);
+    widget.refreshParent?.call();
+    Navigator.of(context).pop();
   }
 
   Future<String?> saveImage() async {

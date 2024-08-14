@@ -1,4 +1,3 @@
-import 'package:diary_app/core/database/database_helper.dart';
 import 'package:diary_app/core/enum/face_enum.dart';
 import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
@@ -12,9 +11,11 @@ class EntryItem extends StatelessWidget {
   const EntryItem({
     super.key,
     required this.entry,
+    required this.refreshParent,
   });
 
   final Entry entry;
+  final VoidCallback? refreshParent;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,12 @@ class EntryItem extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NewEntryScreen(entry: entry)),
+          MaterialPageRoute(
+            builder: (context) => NewEntryScreen(
+              entry: entry,
+              refreshParent: refreshParent,
+            ),
+          ),
         );
       },
       behavior: HitTestBehavior.opaque,
