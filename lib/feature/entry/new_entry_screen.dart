@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/enum/face_enum.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
 import 'package:diary_app/core/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 class NewEntryScreen extends StatefulWidget {
   const NewEntryScreen({super.key});
@@ -16,6 +20,8 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
   final controller = TextEditingController();
 
   Face selectedFace = Face.poker;
+
+  XFile? image;
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +105,43 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               AppButton(
                 title: 'добавить фото+'.toUpperCase(),
                 size: AppButtonSize.small,
-                onTap: () {},
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? tmp = await picker.pickImage(source: ImageSource.gallery);
+                  if (tmp == null) return;
+                  setState(() {
+                    image = tmp;
+                  });
+                },
               ),
-              const Spacer(),
+              image == null
+                  ? const Spacer()
+                  : Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 25),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              image = null;
+                            });
+                          },
+                          child: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Image.file(
+                                File(image!.path),
+                                fit: BoxFit.contain,
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: SvgPicture.asset(AppSvg.deleteSmall),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 49),
                 child: AppButton(

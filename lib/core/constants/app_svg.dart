@@ -6,6 +6,8 @@ abstract class AppSvg {
   static const search = 'assets/svg/search.svg';
   static const search25 = 'assets/svg/search25.svg';
 
+  static const deleteSmall = 'assets/svg/delete_small.svg';
+
   static const cool = 'assets/face/cool.svg';
   static const dizziness = 'assets/face/dizziness.svg';
   static const getIll = 'assets/face/get_ill.svg';
