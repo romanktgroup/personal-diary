@@ -1,6 +1,7 @@
 import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/widget/app_button.dart';
+import 'package:diary_app/feature/main/main_screen.dart';
 import 'package:diary_app/feature/onboarding/widget/onbording_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -63,7 +64,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: AppButton(
                 title: 'Продолжить'.toUpperCase(),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 43),

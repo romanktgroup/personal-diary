@@ -35,4 +35,11 @@ abstract class AppStyle {
     height: 28.13 / 24,
     fontWeight: FontWeight.w700,
   );
+
+  static const plus = TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: 100,
+    height: 100 / 100,
+    fontWeight: FontWeight.w400,
+  );
 }
