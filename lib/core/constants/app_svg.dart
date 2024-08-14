@@ -7,7 +7,7 @@ abstract class AppSvg {
   static const search25 = 'assets/svg/search25.svg';
 
   static const cool = 'assets/face/cool.svg';
-  static const dissiness = 'assets/face/dissiness.svg';
+  static const dizziness = 'assets/face/dizziness.svg';
   static const getIll = 'assets/face/get_ill.svg';
   static const happy = 'assets/face/happy.svg';
   static const happy2 = 'assets/face/happy2.svg';

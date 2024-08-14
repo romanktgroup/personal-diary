@@ -42,4 +42,18 @@ abstract class AppStyle {
     height: 100 / 100,
     fontWeight: FontWeight.w400,
   );
+
+  static const smallTitle = TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: 17,
+    height: 19.92 / 17,
+    fontWeight: FontWeight.w400,
+  );
+
+  static const inputText = TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    height: 20 / 16,
+    fontWeight: FontWeight.w400,
+  );
 }

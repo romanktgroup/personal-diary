@@ -2,6 +2,7 @@ import 'package:diary_app/core/constants/app_image.dart';
 import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
+import 'package:diary_app/feature/entry/new_entry_screen.dart';
 import 'package:diary_app/feature/search/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(
           children: [
             const SizedBox(height: 25),
-            Container(
+            SizedBox(
               height: 45,
               child: Row(
                 children: [
@@ -82,7 +83,12 @@ class _MainScreenState extends State<MainScreen> {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NewEntryScreen()),
+                );
+              },
               behavior: HitTestBehavior.opaque,
               child: Container(
                 height: 100,
