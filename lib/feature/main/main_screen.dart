@@ -30,16 +30,14 @@ class _MainScreenState extends State<MainScreen> {
                   const Spacer(),
                   Text(
                     'Главная',
-                    style:
-                        AppStyle.mainPageTitle.copyWith(color: AppColor.green),
+                    style: AppStyle.mainPageTitle.copyWith(color: AppColor.green),
                   ),
                   const Spacer(),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const SearchScreen()),
+                        MaterialPageRoute(builder: (context) => const SearchScreen()),
                       );
                     },
                     behavior: HitTestBehavior.opaque,
