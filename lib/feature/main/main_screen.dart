@@ -1,7 +1,10 @@
 import 'package:diary_app/core/constants/app_image.dart';
+import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
+import 'package:diary_app/feature/search/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,10 +24,29 @@ class _MainScreenState extends State<MainScreen> {
             const SizedBox(height: 25),
             Container(
               height: 45,
-              alignment: Alignment.center,
-              child: Text(
-                'Главная',
-                style: AppStyle.mainPageTitle.copyWith(color: AppColor.green),
+              child: Row(
+                children: [
+                  const SizedBox(width: 24 + 32),
+                  const Spacer(),
+                  Text(
+                    'Главная',
+                    style:
+                        AppStyle.mainPageTitle.copyWith(color: AppColor.green),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SearchScreen()),
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: SvgPicture.asset(AppSvg.search),
+                  ),
+                  const SizedBox(width: 24),
+                ],
               ),
             ),
             const SizedBox(height: 75),
