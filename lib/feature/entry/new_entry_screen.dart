@@ -1,27 +1,114 @@
 import 'dart:io';
 
 import 'package:diary_app/core/constants/app_svg.dart';
+import 'package:diary_app/core/database/database_helper.dart';
 import 'package:diary_app/core/enum/face_enum.dart';
+import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
 import 'package:diary_app/core/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class NewEntryScreen extends StatefulWidget {
-  const NewEntryScreen({super.key});
+  const NewEntryScreen({
+    super.key,
+    this.entry,
+  });
+
+  final Entry? entry;
 
   @override
   State<NewEntryScreen> createState() => _NewEntryScreenState();
 }
 
 class _NewEntryScreenState extends State<NewEntryScreen> {
-  final controller = TextEditingController();
+  late final controller = TextEditingController(text: widget.entry?.text);
 
-  Face selectedFace = Face.poker;
+  late Face selectedFace = widget.entry?.face ?? Face.poker;
 
   XFile? image;
+
+  final dbHelper = DatabaseHelper.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    loadImage();
+  }
+
+  loadImage() async {
+    final path = widget.entry?.imagePath;
+    if (path == null) return;
+
+    final file = await loadImageFromPath(path);
+
+    if (file == null) return;
+
+    setState(() {
+      image = file;
+    });
+  }
+
+  Future<XFile?> loadImageFromPath(String imagePath) async {
+    try {
+      // Создаем объект XFile из локального пути
+      XFile imageFile = XFile(imagePath);
+      return imageFile;
+    } catch (e) {
+      print('Error loading image: $e');
+      return null;
+    }
+  }
+
+  void _saveRecord(BuildContext context) async {
+    if (controller.text.isEmpty) return;
+
+    final String? imagePath = await saveImage();
+
+    Map<String, dynamic> row = {
+      DatabaseHelper.columnText: controller.text,
+      DatabaseHelper.columnEnum: selectedFace,
+      DatabaseHelper.columnImagePath: imagePath ?? '',
+      DatabaseHelper.columnDateTime: (widget.entry?.dateTime ?? DateTime.now()).toIso8601String(),
+    };
+
+    if (widget.entry == null) {
+      final id = await dbHelper.insert(row);
+      print('Inserted row id: $id');
+    } else {
+      row[DatabaseHelper.columnId] = widget.entry!.id;
+      final id = await dbHelper.update(row);
+      print('Updated row id: $id');
+    }
+
+    Navigator.of(context).pop(true);
+  }
+
+  Future<String?> saveImage() async {
+    String? imagePath;
+
+    if (image == null) return null;
+
+    Directory directory = await getApplicationDocumentsDirectory();
+
+    // Получаем текущее время в микросекундах
+    String timestamp = DateTime.now().microsecondsSinceEpoch.toString();
+
+    // Извлекаем расширение файла (например, .png, .jpg)
+    String extension = path.extension(image!.name);
+
+    // Создаем уникальное имя файла, сохраняя только расширение
+    String uniqueFileName = '$timestamp$extension';
+
+    imagePath = path.join(directory.path, uniqueFileName);
+    await image!.saveTo(imagePath);
+
+    return imagePath;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +146,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
               TextField(
                 controller: controller,
                 minLines: 4,
-                maxLines: 10,
+                maxLines: 6,
                 style: AppStyle.inputText.copyWith(color: AppColor.black),
                 decoration: InputDecoration(
                   border: outlineInputBorder,
@@ -146,7 +233,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 49),
                 child: AppButton(
                   title: 'сохранить'.toUpperCase(),
-                  onTap: () {},
+                  onTap: () => _saveRecord(context),
                 ),
               ),
               const SizedBox(height: 20),
@@ -156,7 +243,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
                   title: 'назад'.toUpperCase(),
                   color: AppButtonColor.outline,
                   onTap: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(true);
                   },
                 ),
               ),
