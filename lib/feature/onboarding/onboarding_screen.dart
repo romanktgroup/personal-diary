@@ -1,6 +1,5 @@
 import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/theme/app_color.dart';
-import 'package:diary_app/core/widget/app_button.dart';
 import 'package:diary_app/feature/main/main_screen.dart';
 import 'package:diary_app/feature/onboarding/widget/onbording_tile.dart';
 import 'package:diary_app/main.dart';
