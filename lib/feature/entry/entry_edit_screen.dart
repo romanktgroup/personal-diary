@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/database/database_helper.dart';
 import 'package:diary_app/core/enum/face_enum.dart';
+import 'package:diary_app/core/helpers/show_snack_bar.dart';
 import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
@@ -203,14 +204,7 @@ class _EntryEditScreenState extends State<EntryEditScreen> {
                   size: AppButtonSize.small,
                   onTap: () async {
                     if (images.length >= 5) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Можно добавить максимум 5 изображений!',
-                            style: AppStyle.startText.copyWith(color: AppColor.green),
-                          ),
-                        ),
-                      );
+                      showSnackBar(context, 'Можно добавить максимум 5 изображений!');
                       return;
                     }
                     final ImagePicker picker = ImagePicker();

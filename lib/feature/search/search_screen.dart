@@ -1,5 +1,6 @@
 import 'package:diary_app/core/constants/app_svg.dart';
 import 'package:diary_app/core/database/database_helper.dart';
+import 'package:diary_app/core/helpers/show_snack_bar.dart';
 import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
@@ -97,7 +98,34 @@ class _SearchScreenState extends State<SearchScreen> with RouteAware {
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 56 + 39 + 39),
                 itemCount: entries.length,
-                itemBuilder: (context, index) => EntryItem(entry: entries[index]),
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: Key(entries[index].id.toString()),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.centerRight,
+                      color: AppColor.white,
+                      child: SvgPicture.asset(AppSvg.delete),
+                    ),
+                    onDismissed: (direction) async {
+                      await dbHelper.delete(entries[index].id);
+
+                      setState(() {
+                        entries.removeAt(index);
+                      });
+
+                      showSnackBar(context, 'Запись удалена');
+                    },
+                    confirmDismiss: (direction) async {
+                      if (direction == DismissDirection.endToStart) {
+                        return Future.value(true);
+                      }
+                      return Future.value(false);
+                    },
+                    child: EntryItem(entry: entries[index]),
+                  );
+                },
                 separatorBuilder: (context, index) => const SizedBox(height: 30),
               ),
             ),
