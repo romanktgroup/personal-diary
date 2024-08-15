@@ -2,7 +2,7 @@ import 'package:diary_app/core/enum/face_enum.dart';
 import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
-import 'package:diary_app/feature/entry/entry_edit_screen.dart';
+import 'package:diary_app/feature/entry/entry_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -23,9 +23,7 @@ class EntryItem extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => EntryEditScreen(
-              entry: entry,
-            ),
+            builder: (context) => EntryViewScreen(entry: entry),
           ),
         );
       },

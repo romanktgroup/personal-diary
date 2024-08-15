@@ -96,4 +96,19 @@ class DatabaseHelper {
     );
     return result.map(Entry.fromMap).toList();
   }
+
+  Future<Entry?> loadEntryById(int id) async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> result = await db.query(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      return Entry.fromMap(result.first);
+    } else {
+      return null;
+    }
+  }
 }
