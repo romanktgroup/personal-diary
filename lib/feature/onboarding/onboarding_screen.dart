@@ -15,65 +15,74 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  void onTap() async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+    );
+    await prefs.setBool('onboardingCompleted', true);
+  }
+
+  void next() {
+    controller.animateToPage(
+      (controller.page?.floor() ?? 0) + 1,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+
   final controller = PageController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.white,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            SizedBox(
-              height: 550,
+            Positioned.fill(
               child: PageView(
                 controller: controller,
-                children: const [
+                children: [
                   OnboardingTile(
                     image: AppSvg.onboarding1,
                     title: 'Добро пожаловать в Мой дневник!',
+                    onTap: next,
                   ),
                   OnboardingTile(
                     image: AppSvg.onboarding2,
                     title: 'Создайте свой собственный дневник',
                     text: 'Сохраняйте свою мотивацию и эмоции, уделяя всего 10 минут в день',
+                    onTap: next,
                   ),
                   OnboardingTile(
                     image: AppSvg.onboarding1,
                     title: 'Выразите свои чувства:',
                     text: 'Ведь в мире нет ничего лучше, чем понимать себя',
+                    onTap: onTap,
                   ),
                 ],
               ),
             ),
-            const Spacer(),
-            SmoothPageIndicator(
-              controller: controller,
-              count: 3,
-              effect: const ExpandingDotsEffect(
-                dotColor: AppColor.greenLight,
-                activeDotColor: AppColor.green,
-                dotWidth: 16,
-                dotHeight: 12,
-                // strokeWidth: 24,
-                spacing: 10,
-                expansionFactor: 24 / 16,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 43 + 56 + 40,
+              child: Center(
+                child: SmoothPageIndicator(
+                  controller: controller,
+                  count: 3,
+                  effect: const ExpandingDotsEffect(
+                    dotColor: AppColor.greenLight,
+                    activeDotColor: AppColor.green,
+                    dotWidth: 16,
+                    dotHeight: 12,
+                    // strokeWidth: 24,
+                    spacing: 10,
+                    expansionFactor: 24 / 16,
+                  ),
+                ),
               ),
             ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: AppButton(
-                title: 'Продолжить'.toUpperCase(),
-                onTap: () async {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MainScreen()),
-                  );
-                  await prefs.setBool('onboardingCompleted', true);
-                },
-              ),
-            ),
-            const SizedBox(height: 43),
           ],
         ),
       ),
