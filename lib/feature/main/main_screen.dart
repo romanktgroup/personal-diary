@@ -7,6 +7,7 @@ import 'package:diary_app/core/theme/app_style.dart';
 import 'package:diary_app/feature/entry/new_entry_screen.dart';
 import 'package:diary_app/feature/main/widget/entry_item.dart';
 import 'package:diary_app/feature/search/search_screen.dart';
+import 'package:diary_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -17,7 +18,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with RouteAware {
   final dbHelper = DatabaseHelper.instance;
 
   List<Entry> entries = [];
@@ -40,6 +41,24 @@ class _MainScreenState extends State<MainScreen> {
       print('error-------');
       print(e.toString());
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    _loadRecords();
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -116,10 +135,7 @@ class _MainScreenState extends State<MainScreen> {
                     child: ListView.separated(
                       padding: const EdgeInsets.fromLTRB(24, 0, 24, 100 + 45 + 45),
                       itemCount: entries.length,
-                      itemBuilder: (context, index) => EntryItem(
-                        entry: entries[index],
-                        refreshParent: _loadRecords,
-                      ),
+                      itemBuilder: (context, index) => EntryItem(entry: entries[index]),
                       separatorBuilder: (context, index) => const SizedBox(height: 30),
                     ),
                   ),
@@ -133,9 +149,7 @@ class _MainScreenState extends State<MainScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => NewEntryScreen(
-                        refreshParent: _loadRecords,
-                      ),
+                      builder: (context) => const NewEntryScreen(),
                     ),
                   );
                 },

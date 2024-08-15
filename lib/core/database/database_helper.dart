@@ -80,4 +80,16 @@ class DatabaseHelper {
   T stringToEnum<T extends Enum>(String value, List<T> values) {
     return values.firstWhere((e) => e.toString().split('.').last == value);
   }
+
+  Future<List<Entry>> searchEntries(String query) async {
+    print('searchEntries: $query');
+    Database db = await instance.database;
+    // Выполняем запрос с использованием SQL LIKE
+    List<Map<String, dynamic>> result = await db.query(
+      table,
+      where: '$columnText LIKE ?',
+      whereArgs: ['%$query%'],
+    );
+    return result.map(Entry.fromMap).toList();
+  }
 }

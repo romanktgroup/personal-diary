@@ -11,11 +11,9 @@ class EntryItem extends StatelessWidget {
   const EntryItem({
     super.key,
     required this.entry,
-    required this.refreshParent,
   });
 
   final Entry entry;
-  final VoidCallback? refreshParent;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +25,6 @@ class EntryItem extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => NewEntryScreen(
               entry: entry,
-              refreshParent: refreshParent,
             ),
           ),
         );
