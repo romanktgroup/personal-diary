@@ -56,7 +56,10 @@ class DatabaseHelper {
 
   Future<List<Entry>> queryAllRows() async {
     Database db = await instance.database;
-    List<Map<String, dynamic>> red = await db.query(table);
+    List<Map<String, dynamic>> red = await db.query(
+      table,
+      orderBy: '$columnDateTime DESC',
+    );
     return red.map(Entry.fromMap).toList();
   }
 
@@ -89,6 +92,7 @@ class DatabaseHelper {
       table,
       where: '$columnText LIKE ?',
       whereArgs: ['%$query%'],
+      orderBy: '$columnDateTime DESC',
     );
     return result.map(Entry.fromMap).toList();
   }
