@@ -3,6 +3,7 @@ import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/widget/app_button.dart';
 import 'package:diary_app/feature/main/main_screen.dart';
 import 'package:diary_app/feature/onboarding/widget/onbording_tile.dart';
+import 'package:diary_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -34,8 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingTile(
                     image: AppSvg.onboarding2,
                     title: 'Создайте свой собственный дневник',
-                    text:
-                        'Сохраняйте свою мотивацию и эмоции, уделяя всего 10 минут в день',
+                    text: 'Сохраняйте свою мотивацию и эмоции, уделяя всего 10 минут в день',
                   ),
                   OnboardingTile(
                     image: AppSvg.onboarding1,
@@ -64,11 +64,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: AppButton(
                 title: 'Продолжить'.toUpperCase(),
-                onTap: () {
+                onTap: () async {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MainScreen()),
                   );
+                  await prefs.setBool('onboardingCompleted', true);
                 },
               ),
             ),
