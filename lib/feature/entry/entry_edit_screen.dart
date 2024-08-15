@@ -13,8 +13,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-class NewEntryScreen extends StatefulWidget {
-  const NewEntryScreen({
+class EntryEditScreen extends StatefulWidget {
+  const EntryEditScreen({
     super.key,
     this.entry,
   });
@@ -22,10 +22,10 @@ class NewEntryScreen extends StatefulWidget {
   final Entry? entry;
 
   @override
-  State<NewEntryScreen> createState() => _NewEntryScreenState();
+  State<EntryEditScreen> createState() => _EntryEditScreenState();
 }
 
-class _NewEntryScreenState extends State<NewEntryScreen> {
+class _EntryEditScreenState extends State<EntryEditScreen> {
   late final controller = TextEditingController(text: widget.entry?.text);
 
   late Face selectedFace = widget.entry?.face ?? Face.poker;
@@ -44,6 +44,7 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
     final path = widget.entry?.imagePath;
     if (path == null) return;
 
+    if (!(await checkIfFileExists(path))) return;
     final file = await loadImageFromPath(path);
 
     if (file == null) return;
@@ -55,13 +56,17 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   Future<XFile?> loadImageFromPath(String imagePath) async {
     try {
-      // Создаем объект XFile из локального пути
       XFile imageFile = XFile(imagePath);
       return imageFile;
     } catch (e) {
       print('Error loading image: $e');
       return null;
     }
+  }
+
+  Future<bool> checkIfFileExists(String path) async {
+    final file = File(path);
+    return await file.exists();
   }
 
   void _saveRecord(BuildContext context) async {
@@ -94,13 +99,10 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
     Directory directory = await getApplicationDocumentsDirectory();
 
-    // Получаем текущее время в микросекундах
     String timestamp = DateTime.now().microsecondsSinceEpoch.toString();
 
-    // Извлекаем расширение файла (например, .png, .jpg)
     String extension = path.extension(image!.name);
 
-    // Создаем уникальное имя файла, сохраняя только расширение
     String uniqueFileName = '$timestamp$extension';
 
     imagePath = path.join(directory.path, uniqueFileName);

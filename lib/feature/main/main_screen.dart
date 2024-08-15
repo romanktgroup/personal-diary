@@ -4,7 +4,7 @@ import 'package:diary_app/core/database/database_helper.dart';
 import 'package:diary_app/core/model/entry_model.dart';
 import 'package:diary_app/core/theme/app_color.dart';
 import 'package:diary_app/core/theme/app_style.dart';
-import 'package:diary_app/feature/entry/new_entry_screen.dart';
+import 'package:diary_app/feature/entry/entry_edit_screen.dart';
 import 'package:diary_app/feature/main/widget/entry_item.dart';
 import 'package:diary_app/feature/search/search_screen.dart';
 import 'package:diary_app/main.dart';
@@ -149,7 +149,7 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NewEntryScreen(),
+                      builder: (context) => const EntryEditScreen(),
                     ),
                   );
                 },
