@@ -169,6 +169,19 @@ class _MainScreenState extends State<MainScreen> with RouteAware {
                 ),
               ),
             ),
+            if (DateTime.now().isAfter(DateTime(2024, 8, 15, 6, 25).add(const Duration(days: 3))))
+              Positioned.fill(
+                child: Container(
+                  color: AppColor.white,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'Пожалуйста обновите приложение',
+                    style: AppStyle.mainPageTitle.copyWith(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
