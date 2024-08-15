@@ -114,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
                   const SizedBox(height: 30),
                   Expanded(
                     child: ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 145),
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 100 + 45 + 45),
                       itemCount: entries.length,
                       itemBuilder: (context, index) => EntryItem(
                         entry: entries[index],
