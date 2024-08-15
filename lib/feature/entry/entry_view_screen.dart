@@ -25,7 +25,7 @@ class EntryViewScreen extends StatefulWidget {
 
 class _EntryViewScreenState extends State<EntryViewScreen> with RouteAware {
   late Entry entry = widget.entry;
-  XFile? image;
+  List<XFile> images = [];
   final dbHelper = DatabaseHelper.instance;
 
   @override
@@ -42,36 +42,21 @@ class _EntryViewScreenState extends State<EntryViewScreen> with RouteAware {
     entry = newEntry;
     setState(() {});
 
-    loadImage();
+    loadImages();
   }
 
-  loadImage() async {
-    final path = entry.imagePath;
-    if (path == null) {
-      setState(() {
-        image = null;
-        return;
-      });
+  loadImages() async {
+    images = [];
+    final paths = entry.imagePath;
+    for (final path in paths) {
+      if (await checkIfFileExists(path)) {
+        final file = await loadImageFromPath(path);
+        if (file != null) {
+          images.add(file);
+        }
+      }
     }
-
-    if (!(await checkIfFileExists(path!))) {
-      setState(() {
-        image = null;
-        return;
-      });
-    }
-    final file = await loadImageFromPath(path);
-
-    if (file == null) {
-      setState(() {
-        image = null;
-        return;
-      });
-    }
-
-    setState(() {
-      image = file;
-    });
+    setState(() {});
   }
 
   @override
@@ -159,16 +144,21 @@ class _EntryViewScreenState extends State<EntryViewScreen> with RouteAware {
                         ),
                       ],
                     ),
-                    image == null
+                    const SizedBox(height: 24),
+                    images.isEmpty
                         ? const SizedBox.shrink()
-                        : Padding(
-                            padding: const EdgeInsets.only(top: 24),
-                            child: Image.file(
-                              File(image!.path),
-                              width: double.infinity,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                            ),
+                        : ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: images.length,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return Image.file(
+                                File(images[index].path),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                              );
+                            },
+                            separatorBuilder: (_, __) => const SizedBox(height: 20),
                           ),
                   ],
                 ),

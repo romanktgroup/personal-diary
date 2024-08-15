@@ -4,14 +4,14 @@ import 'package:diary_app/core/enum/face_enum.dart';
 class Entry {
   final String text;
   final Face face;
-  final String? imagePath;
+  final List<String> imagePath;
   final DateTime dateTime;
   final int id;
 
   Entry({
     required this.text,
     required this.face,
-    this.imagePath,
+    required this.imagePath,
     required this.dateTime,
     required this.id,
   });
@@ -21,7 +21,7 @@ class Entry {
       DatabaseHelper.columnId: id,
       DatabaseHelper.columnText: text,
       DatabaseHelper.columnEnum: face.toString().split('.').last,
-      DatabaseHelper.columnImagePath: imagePath,
+      DatabaseHelper.columnImagePath: imagePath.join(','),
       DatabaseHelper.columnDateTime: dateTime.toIso8601String(),
     };
   }
@@ -32,7 +32,9 @@ class Entry {
       id: map[DatabaseHelper.columnId],
       text: map[DatabaseHelper.columnText],
       face: Face.values.firstWhere((e) => e.toString().split('.').last == map[DatabaseHelper.columnEnum]),
-      imagePath: map[DatabaseHelper.columnImagePath],
+      imagePath: map[DatabaseHelper.columnImagePath] != null
+          ? (map[DatabaseHelper.columnImagePath] as String).split(',')
+          : <String>[],
       dateTime: DateTime.parse(map[DatabaseHelper.columnDateTime]),
     );
   }

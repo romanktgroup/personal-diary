@@ -31,28 +31,28 @@ class _EntryEditScreenState extends State<EntryEditScreen> {
 
   late Face selectedFace = widget.entry?.face ?? Face.poker;
 
-  XFile? image;
+  List<XFile> images = [];
 
   final dbHelper = DatabaseHelper.instance;
 
   @override
   void initState() {
     super.initState();
-    loadImage();
+    loadImages();
   }
 
-  loadImage() async {
-    final path = widget.entry?.imagePath;
-    if (path == null) return;
-
-    if (!(await checkIfFileExists(path))) return;
-    final file = await loadImageFromPath(path);
-
-    if (file == null) return;
-
-    setState(() {
-      image = file;
-    });
+  loadImages() async {
+    final paths = widget.entry?.imagePath ?? [];
+    for (final path in paths) {
+      if (await checkIfFileExists(path)) {
+        final file = await loadImageFromPath(path);
+        if (file != null) {
+          setState(() {
+            images.add(file);
+          });
+        }
+      }
+    }
   }
 
   Future<XFile?> loadImageFromPath(String imagePath) async {
@@ -73,12 +73,18 @@ class _EntryEditScreenState extends State<EntryEditScreen> {
   void _saveRecord(BuildContext context) async {
     if (controller.text.isEmpty) return;
 
-    final String? imagePath = await saveImage();
+    List<String> imagePaths = [];
+    for (final image in images) {
+      final imagePath = await saveImage(image);
+      if (imagePath != null) {
+        imagePaths.add(imagePath);
+      }
+    }
 
     Map<String, dynamic> row = {
       DatabaseHelper.columnText: controller.text,
       DatabaseHelper.columnEnum: selectedFace,
-      DatabaseHelper.columnImagePath: imagePath ?? '',
+      DatabaseHelper.columnImagePath: imagePaths.join(','),
       DatabaseHelper.columnDateTime: (widget.entry?.dateTime ?? DateTime.now()).toIso8601String(),
     };
 
@@ -93,21 +99,17 @@ class _EntryEditScreenState extends State<EntryEditScreen> {
     Navigator.of(context).pop();
   }
 
-  Future<String?> saveImage() async {
-    String? imagePath;
-
-    if (image == null) return null;
-
+  Future<String?> saveImage(XFile image) async {
     Directory directory = await getApplicationDocumentsDirectory();
 
     String timestamp = DateTime.now().microsecondsSinceEpoch.toString();
 
-    String extension = path.extension(image!.name);
+    String extension = path.extension(image.name);
 
     String uniqueFileName = '$timestamp$extension';
 
-    imagePath = path.join(directory.path, uniqueFileName);
-    await image!.saveTo(imagePath);
+    String imagePath = path.join(directory.path, uniqueFileName);
+    await image.saveTo(imagePath);
 
     return imagePath;
   }
@@ -200,42 +202,69 @@ class _EntryEditScreenState extends State<EntryEditScreen> {
                   title: 'добавить фото+'.toUpperCase(),
                   size: AppButtonSize.small,
                   onTap: () async {
+                    if (images.length >= 5) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Можно добавить максимум 5 изображений!',
+                            style: AppStyle.startText.copyWith(color: AppColor.green),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     final ImagePicker picker = ImagePicker();
                     final XFile? tmp = await picker.pickImage(source: ImageSource.gallery);
                     if (tmp == null) return;
                     setState(() {
-                      image = tmp;
+                      images.add(tmp);
                     });
                   },
                 ),
-                image == null
-                    ? const Spacer()
-                    : Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 25),
-                          child: GestureDetector(
+                const SizedBox(height: 25),
+                Expanded(
+                  child: LayoutBuilder(builder: (context, constraints) {
+                    return SizedBox(
+                      height: constraints.maxHeight,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: images.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
                             onTap: () {
                               setState(() {
-                                image = null;
+                                images.removeAt(index);
                               });
                             },
                             child: Stack(
                               alignment: Alignment.topRight,
                               children: [
                                 Image.file(
-                                  File(image!.path),
+                                  File(images[index].path),
                                   fit: BoxFit.contain,
                                 ),
                                 Positioned(
                                   top: 10,
                                   right: 10,
-                                  child: SvgPicture.asset(AppSvg.deleteSmall),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        images.removeAt(index);
+                                      });
+                                    },
+                                    child: SvgPicture.asset(AppSvg.deleteSmall),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
+                          );
+                        },
+                        separatorBuilder: (context, index) => const SizedBox(width: 20),
                       ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 25),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 49),
                   child: AppButton(
